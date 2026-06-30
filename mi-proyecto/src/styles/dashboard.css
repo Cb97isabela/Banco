@@ -365,3 +365,417 @@
     background: #fee2e2;
     color: #991b1b;
 }
+
+/*=========================================
+=            MAPA DE ACTIVIDAD            =
+=========================================*/
+
+.location-layout{
+    display:grid;
+    grid-template-columns:2fr 340px;
+    gap:30px;
+    margin-top:25px;
+}
+
+.ecuador-map{
+
+    position:relative;
+
+    height:640px;
+
+    overflow:hidden;
+
+    border-radius:22px;
+
+    background:
+        radial-gradient(circle at center,#133b63 0%,#102844 55%,#081423 100%);
+
+    border:1px solid rgba(56,189,248,.15);
+
+}
+
+/* Cuadrícula */
+
+.ecuador-map::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background-image:
+
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+    background-size:48px 48px;
+
+    z-index:0;
+
+}
+
+/* Círculos radar */
+
+.radar-ring{
+
+    position:absolute;
+
+    border:1px solid rgba(56,189,248,.16);
+
+    border-radius:50%;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+}
+
+.ring-1{
+
+    width:220px;
+
+    height:220px;
+
+}
+
+.ring-2{
+
+    width:520px;
+
+    height:520px;
+
+}
+
+.ring-3{
+
+    width:760px;
+
+    height:760px;
+
+}
+
+/* Barrido */
+
+.radar-sweep{
+
+    position:absolute;
+
+    width:520px;
+
+    height:520px;
+
+    left:50%;
+
+    top:50%;
+
+    transform-origin:0 0;
+
+    background:linear-gradient(90deg,
+    rgba(56,189,248,.18),
+    transparent 65%);
+
+    clip-path:polygon(0 0,100% 15%,0 100%);
+
+    animation:rotateRadar 10s linear infinite;
+
+    z-index:1;
+
+}
+
+@keyframes rotateRadar{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/* ===========================
+   MAPA DEL ECUADOR
+=========================== */
+
+.ecuador-real-map{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:2;
+
+    pointer-events:none;
+
+}
+
+.ecuador-real-map::before{
+
+    content:"";
+
+    width:78%;
+
+    height:92%;
+
+    background-image:url("../assets/mapa-ecuador.png");
+
+    background-repeat:no-repeat;
+
+    background-position:center;
+
+    background-size:contain;
+
+    opacity:.95;
+
+    filter:
+        brightness(1.1)
+        saturate(1.25)
+        drop-shadow(0 0 18px rgba(56,189,248,.9))
+        drop-shadow(0 0 35px rgba(56,189,248,.45));
+
+}
+
+/*=========================
+=        MARCADORES       =
+=========================*/
+
+.city-marker{
+
+    position:absolute;
+
+    transform:translate(-50%,-50%);
+
+    z-index:20;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.city-marker strong{
+
+    width:44px;
+
+    height:44px;
+
+    border-radius:50%;
+
+    background:#ff4b4b;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    box-shadow:
+
+    0 0 18px rgba(255,72,72,.8),
+
+    0 0 35px rgba(255,72,72,.5);
+
+}
+
+.city-marker small{
+
+    margin-top:8px;
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    background:#15233b;
+
+    color:white;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    border:1px solid rgba(56,189,248,.3);
+
+}
+
+.pulse{
+
+    position:absolute;
+
+    width:44px;
+
+    height:44px;
+
+    border-radius:50%;
+
+    background:#ff4b4b;
+
+    animation:pulseMarker 2s infinite;
+
+    z-index:-1;
+
+}
+
+@keyframes pulseMarker{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.75;
+
+    }
+
+    70%{
+
+        transform:scale(2.1);
+
+        opacity:0;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+/*=========================
+=        LEYENDA          =
+=========================*/
+
+.map-legend{
+
+    position:absolute;
+
+    right:25px;
+
+    bottom:25px;
+
+    display:flex;
+
+    gap:14px;
+
+    align-items:center;
+
+    background:#13213a;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    border:1px solid rgba(56,189,248,.2);
+
+    color:white;
+
+    z-index:30;
+
+}
+
+.map-legend span{
+
+    width:24px;
+
+    height:24px;
+
+    background:#ff4b4b;
+
+    border-radius:50%;
+
+    box-shadow:0 0 18px rgba(255,72,72,.8);
+
+}
+
+.map-legend p{
+
+    margin-top:4px;
+
+    color:#d6e5ff;
+
+    font-size:14px;
+
+}
+
+/*=========================
+=      LISTA CIUDADES     =
+=========================*/
+
+.city-list{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.06);
+
+}
+
+.city-list h4{
+
+    font-size:18px;
+
+    margin-bottom:25px;
+
+}
+
+.city-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #ececec;
+
+}
+
+.city-item strong{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:700;
+
+}

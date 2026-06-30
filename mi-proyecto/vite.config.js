@@ -6,15 +6,15 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://192.168.137.159:8000",
+        target: "http://192.168.213.49:8000",
         changeOrigin: true,
       },
       "/health": {
-        target: "http://192.168.137.159:8000",
+        target: "http://192.168.213.49:8000",
         changeOrigin: true,
       },
       "/database": {
-        target: "http://192.168.137.159:8000",
+        target: "http://192.168.213.49:8000",
         changeOrigin: true,
       },
     },

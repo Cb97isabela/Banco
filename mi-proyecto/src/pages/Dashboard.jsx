@@ -4,6 +4,7 @@ import MetricCard from "../components/dashboard/MetricCard";
 import RiskDistributionChart from "../components/dashboard/RiskDistributionChart";
 import ChannelUsageChart from "../components/dashboard/ChannelUsageChart";
 import RecentTransactionsTable from "../components/dashboard/RecentTransactionsTable";
+import LocationMap from "../components/dashboard/LocationMap";
 import { TransactionContext } from "../context/TransactionContext";
 
 function Dashboard() {
@@ -47,6 +48,8 @@ function Dashboard() {
 
         <ChannelUsageChart transactions={transactions} />
       </div>
+
+      <LocationMap transactions={transactions} />
 
       <RecentTransactionsTable transactions={transactions} />
     </section>
