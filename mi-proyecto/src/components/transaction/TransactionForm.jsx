@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { evaluarTransaccion } from "../../services/api";
+import { TransactionContext } from "../../context/TransactionContext";
 
 function TransactionForm({ onResult }) {
   const [loading, setLoading] = useState(false);
+  const { addTransaction } = useContext(TransactionContext);
 
   const generarIdTransaccion = () => {
     const fecha = new Date();
@@ -11,30 +13,28 @@ function TransactionForm({ onResult }) {
     const d = String(fecha.getDate()).padStart(2, "0");
     const random = Math.floor(10000 + Math.random() * 90000);
 
-    return `tx_${y}${m}${d}_${random}`;
+    return `TX-${y}${m}${d}-${random}`;
   };
 
   const [transaction, setTransaction] = useState({
     id_transaccion: "",
     id_socio: "",
-    canal: "banca_movil",
-    tipo_transaccion: "transferencia",
+    canal: "",
+    tipo_transaccion: "",
     monto: "",
     fecha_hora: "",
     hora: "",
     dia_semana: "",
-    ubicacion: "Riobamba",
-    dispositivo: "Android",
+    ubicacion: "",
+    dispositivo: "",
     ip_riesgosa: false,
     beneficiario_nuevo: false,
-    variables_comportamiento: {
-      transacciones_ultima_hora: "",
-      tiempo_entre_operaciones: "",
-      monto_promedio_socio: "",
-      desviacion_monto: "",
-      ubicacion_habitual: true,
-      dispositivo_habitual: true,
-    },
+    transacciones_ultima_hora: "",
+    tiempo_entre_operaciones: "",
+    monto_promedio_socio: "",
+    desviacion_monto: "",
+    ubicacion_habitual: true,
+    dispositivo_habitual: true,
   });
 
   useEffect(() => {
@@ -72,60 +72,45 @@ function TransactionForm({ onResult }) {
     }));
   };
 
-  const handleBehaviorChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setTransaction((prev) => ({
-      ...prev,
-      variables_comportamiento: {
-        ...prev.variables_comportamiento,
-        [name]: type === "checkbox" ? checked : value,
-      },
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
-      ...transaction,
+      id_transaccion: transaction.id_transaccion,
+      id_socio: transaction.id_socio,
+      canal: transaction.canal,
+      tipo_transaccion: transaction.tipo_transaccion,
       monto: Number(transaction.monto),
-      variables_comportamiento: {
-        ...transaction.variables_comportamiento,
-        transacciones_ultima_hora: Number(
-          transaction.variables_comportamiento.transacciones_ultima_hora
-        ),
-        tiempo_entre_operaciones: Number(
-          transaction.variables_comportamiento.tiempo_entre_operaciones
-        ),
-        monto_promedio_socio: Number(
-          transaction.variables_comportamiento.monto_promedio_socio
-        ),
-        desviacion_monto: Number(
-          transaction.variables_comportamiento.desviacion_monto
-        ),
-      },
+      fecha_hora: transaction.fecha_hora,
+      hora: transaction.hora,
+      dia_semana: transaction.dia_semana,
+      ubicacion: transaction.ubicacion,
+      dispositivo: transaction.dispositivo,
+      ip_riesgosa: Boolean(transaction.ip_riesgosa),
+      beneficiario_nuevo: Boolean(transaction.beneficiario_nuevo),
+      transacciones_ultima_hora: Number(transaction.transacciones_ultima_hora),
+      tiempo_entre_operaciones: Number(transaction.tiempo_entre_operaciones),
+      monto_promedio_socio: Number(transaction.monto_promedio_socio),
+      desviacion_monto: Number(transaction.desviacion_monto),
+      ubicacion_habitual: Boolean(transaction.ubicacion_habitual),
+      dispositivo_habitual: Boolean(transaction.dispositivo_habitual),
     };
 
     try {
       setLoading(true);
 
-      console.log("JSON enviado al backend en Python:", payload);
-
       const respuesta = await evaluarTransaccion(payload);
 
-      console.log("Respuesta recibida desde el backend:", respuesta);
-
-      if (respuesta?.exito && onResult) {
+      if (onResult) {
         onResult(respuesta);
-      } else {
-        alert(respuesta?.error || "No fue posible evaluar la transacción.");
       }
+
+      addTransaction(payload, respuesta);
     } catch (error) {
-      console.error("Error conectando con el backend:", error);
+      console.error("Error conectando con backend:", error);
 
       alert(
-        "No fue posible conectar con el backend en Python. Verifica que esté ejecutándose en http://localhost:8000"
+        "No se pudo conectar con el backend. Revisa que esté activo y que la ruta /api/predict funcione."
       );
     } finally {
       setLoading(false);
@@ -134,11 +119,13 @@ function TransactionForm({ onResult }) {
 
   return (
     <form className="transaction-form" onSubmit={handleSubmit}>
-      <h2>Nueva Transacción</h2>
-
-      <p className="form-subtitle">
-        Complete los datos para que el modelo de IA evalúe el riesgo de la operación.
-      </p>
+      <div className="card-header">
+        <h2>Datos para evaluación</h2>
+        <p>
+          Complete la información requerida para enviar la transacción al backend
+          en Python.
+        </p>
+      </div>
 
       <div className="form-section">
         <h3>Información del Socio</h3>
@@ -155,7 +142,7 @@ function TransactionForm({ onResult }) {
               name="id_socio"
               value={transaction.id_socio}
               onChange={handleChange}
-              placeholder="Ej: socio_77341"
+              placeholder="Ej: SOC-1001"
               required
             />
           </div>
@@ -172,9 +159,11 @@ function TransactionForm({ onResult }) {
               name="canal"
               value={transaction.canal}
               onChange={handleChange}
+              required
             >
-              <option value="banca_movil">Banca Móvil</option>
-              <option value="banca_web">Banca Web</option>
+              <option value="">Seleccione un canal</option>
+              <option value="banca_movil">Banca móvil</option>
+              <option value="banca_web">Banca web</option>
               <option value="cajero">Cajero</option>
               <option value="agencia">Agencia</option>
             </select>
@@ -186,7 +175,9 @@ function TransactionForm({ onResult }) {
               name="tipo_transaccion"
               value={transaction.tipo_transaccion}
               onChange={handleChange}
+              required
             >
+              <option value="">Seleccione un tipo</option>
               <option value="transferencia">Transferencia</option>
               <option value="pago">Pago</option>
               <option value="retiro">Retiro</option>
@@ -201,7 +192,7 @@ function TransactionForm({ onResult }) {
               name="monto"
               value={transaction.monto}
               onChange={handleChange}
-              placeholder="450.00"
+              placeholder="0"
               step="0.01"
               required
             />
@@ -213,23 +204,20 @@ function TransactionForm({ onResult }) {
               name="ubicacion"
               value={transaction.ubicacion}
               onChange={handleChange}
-              placeholder="Riobamba"
+              placeholder="Ej: Riobamba"
               required
             />
           </div>
 
           <div className="form-group">
             <label>Dispositivo</label>
-            <select
+            <input
               name="dispositivo"
               value={transaction.dispositivo}
               onChange={handleChange}
-            >
-              <option value="Android">Android</option>
-              <option value="iPhone">iPhone</option>
-              <option value="Windows">Windows</option>
-              <option value="MacOS">MacOS</option>
-            </select>
+              placeholder="Ej: Android"
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -258,11 +246,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="transacciones_ultima_hora"
-              value={
-                transaction.variables_comportamiento.transacciones_ultima_hora
-              }
-              onChange={handleBehaviorChange}
-              placeholder="2"
+              value={transaction.transacciones_ultima_hora}
+              onChange={handleChange}
+              placeholder="0"
               required
             />
           </div>
@@ -272,11 +258,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="tiempo_entre_operaciones"
-              value={
-                transaction.variables_comportamiento.tiempo_entre_operaciones
-              }
-              onChange={handleBehaviorChange}
-              placeholder="15"
+              value={transaction.tiempo_entre_operaciones}
+              onChange={handleChange}
+              placeholder="0"
               required
             />
           </div>
@@ -286,9 +270,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="monto_promedio_socio"
-              value={transaction.variables_comportamiento.monto_promedio_socio}
-              onChange={handleBehaviorChange}
-              placeholder="120.50"
+              value={transaction.monto_promedio_socio}
+              onChange={handleChange}
+              placeholder="0"
               step="0.01"
               required
             />
@@ -299,9 +283,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="desviacion_monto"
-              value={transaction.variables_comportamiento.desviacion_monto}
-              onChange={handleBehaviorChange}
-              placeholder="329.50"
+              value={transaction.desviacion_monto}
+              onChange={handleChange}
+              placeholder="0"
               step="0.01"
               required
             />
@@ -334,8 +318,8 @@ function TransactionForm({ onResult }) {
             <input
               type="checkbox"
               name="ubicacion_habitual"
-              checked={transaction.variables_comportamiento.ubicacion_habitual}
-              onChange={handleBehaviorChange}
+              checked={transaction.ubicacion_habitual}
+              onChange={handleChange}
             />
           </label>
 
@@ -344,8 +328,8 @@ function TransactionForm({ onResult }) {
             <input
               type="checkbox"
               name="dispositivo_habitual"
-              checked={transaction.variables_comportamiento.dispositivo_habitual}
-              onChange={handleBehaviorChange}
+              checked={transaction.dispositivo_habitual}
+              onChange={handleChange}
             />
           </label>
         </div>

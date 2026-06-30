@@ -56,25 +56,9 @@ function Sidebar() {
 
       </nav>
 
-      {/* Estado del backend */}
+      
 
-      <div className="backend-status">
-
-        <div className="backend-title">
-          <FaServer />
-          <span>Backend</span>
-        </div>
-
-        <div className="backend-indicator online">
-          <FaCircle />
-          <span>Simulación Local</span>
-        </div>
-
-        <small>
-          Esperando conexión con Python API
-        </small>
-
-      </div>
+      
     </aside>
   );
 }

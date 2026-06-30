@@ -14,7 +14,7 @@ function Transactions() {
         </div>
 
         <div className="transaction-right">
-          <RiskResultCard resultado={resultadoIA} />
+          <RiskResultCard result={resultadoIA} />
         </div>
       </div>
     </section>

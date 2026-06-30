@@ -211,3 +211,157 @@
     color: #0f172a;
     font-size: 14px;
 }
+
+/* ===========================
+   BARRAS DE RIESGO
+=========================== */
+
+.risk-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.risk-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 40px;
+    align-items: center;
+    gap: 14px;
+}
+
+.risk-row span {
+    color: #475569;
+    font-weight: 600;
+}
+
+.risk-row strong {
+    color: #0f172a;
+    font-size: 18px;
+    text-align: right;
+}
+
+.bar {
+    width: 100%;
+    height: 14px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+
+.bar-fill.success {
+    background: #22c55e;
+}
+
+.bar-fill.warning {
+    background: #f59e0b;
+}
+
+.bar-fill.danger {
+    background: #ef4444;
+}
+
+/* ===========================
+   CANALES
+=========================== */
+
+.channel-chart {
+    height: 250px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+    gap: 18px;
+    margin-top: 30px;
+}
+
+.channel-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.channel-bar {
+    height: 180px;
+    width: 42px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    display: flex;
+    align-items: end;
+    overflow: hidden;
+}
+
+.channel-bar-fill {
+    width: 100%;
+    background: linear-gradient(180deg, #0ea5e9, #2563eb);
+    border-radius: 999px;
+    transition: height .4s ease;
+}
+
+.channel-item strong {
+    color: #0f172a;
+    font-size: 18px;
+}
+
+.channel-item span {
+    color: #64748b;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* ===========================
+   TABLA RECIENTE
+=========================== */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 22px;
+}
+
+.recent-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-table th {
+    text-align: left;
+    padding: 14px;
+    color: #64748b;
+    font-size: 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.recent-table td {
+    padding: 16px 14px;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.status-badge {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-badge.bajo {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.medio {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.alto {
+    background: #fee2e2;
+    color: #991b1b;
+}

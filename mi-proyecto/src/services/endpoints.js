@@ -1,13 +1,9 @@
 const ENDPOINTS = {
-  EVALUAR_TRANSACCION: "/evaluar-transaccion",
+  EVALUAR_TRANSACCION: "/api/predict",
 
-  DASHBOARD: "/dashboard",
-
-  FRAUDES: "/fraudes",
-
-  DISPOSITIVOS: "/dispositivos",
-
-  REPORTES: "/reportes",
+  HOME: "/",
+  HEALTH: "/health",
+  DATABASE: "/database",
 };
 
 export default ENDPOINTS;

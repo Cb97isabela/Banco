@@ -1,48 +1,47 @@
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+function RiskDistributionChart({ aprobadas = 0, pendientes = 0, bloqueadas = 0 }) {
+  const total = aprobadas + pendientes + bloqueadas;
 
-function RiskDistributionChart() {
-  const data = [
-    { name: "Aprobadas", value: 0, color: "#22c55e" },
-    { name: "Pendientes", value: 0, color: "#f59e0b" },
-    { name: "Bloqueadas", value: 0, color: "#ef4444" },
-  ];
+  const porcentaje = (valor) => {
+    if (total === 0) return 0;
+    return Math.round((valor / total) * 100);
+  };
 
   return (
     <div className="dashboard-panel">
       <h3>Distribución de Riesgo</h3>
       <p>Clasificación de transacciones evaluadas por el modelo IA.</p>
 
-      <div className="empty-chart">
-        <ResponsiveContainer width="100%" height={260}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              outerRadius={85}
-              dataKey="value"
-              label
-            >
-              {data.map((item) => (
-                <Cell key={item.name} fill={item.color} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="risk-bars">
+        <div className="risk-row">
+          <span>Aprobadas</span>
+          <div className="bar">
+            <div className="bar-fill success" style={{ width: `${porcentaje(aprobadas)}%` }} />
+          </div>
+          <strong>{aprobadas}</strong>
+        </div>
 
+        <div className="risk-row">
+          <span>Pendientes</span>
+          <div className="bar">
+            <div className="bar-fill warning" style={{ width: `${porcentaje(pendientes)}%` }} />
+          </div>
+          <strong>{pendientes}</strong>
+        </div>
+
+        <div className="risk-row">
+          <span>Bloqueadas</span>
+          <div className="bar">
+            <div className="bar-fill danger" style={{ width: `${porcentaje(bloqueadas)}%` }} />
+          </div>
+          <strong>{bloqueadas}</strong>
+        </div>
+      </div>
+
+      {total === 0 && (
         <span className="empty-message">
           Sin datos todavía. Se actualizará cuando existan transacciones.
         </span>
-      </div>
+      )}
     </div>
   );
 }
