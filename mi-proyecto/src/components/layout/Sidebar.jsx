@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 import {
   FaShieldAlt,
   FaHome,
@@ -10,7 +12,6 @@ import {
 function Sidebar() {
   return (
     <aside className="sidebar">
-
       <div className="logo">
         <FaShieldAlt className="logo-icon" />
         <div>
@@ -20,34 +21,31 @@ function Sidebar() {
       </div>
 
       <nav>
-
-        <a href="#" className="active">
+        <NavLink to="/dashboard">
           <FaHome />
           Dashboard
-        </a>
+        </NavLink>
 
-        <a href="#">
+        <NavLink to="/transactions">
           <FaExchangeAlt />
           Transacciones
-        </a>
+        </NavLink>
 
-        <a href="#">
+        <NavLink to="/frauds">
           <FaExclamationTriangle />
           Posibles Fraudes
-        </a>
+        </NavLink>
 
-        <a href="#">
+        <NavLink to="/devices">
           <FaDesktop />
           Dispositivos
-        </a>
+        </NavLink>
 
-        <a href="#">
+        <NavLink to="/reports">
           <FaChartBar />
           Reportes
-        </a>
-
+        </NavLink>
       </nav>
-
     </aside>
   );
 }

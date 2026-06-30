@@ -1,8 +1,14 @@
-import "./styles/transaction.css";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import "./styles/dashboard.css";
 import "./styles/layout.css";
+import "./styles/transaction.css";
+
 import Sidebar from "./components/layout/Sidebar";
 import Navbar from "./components/layout/Navbar";
-import TransactionForm from "./components/transaction/TransactionForm";
+
+import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
 
 function App() {
   return (
@@ -13,17 +19,11 @@ function App() {
         <Navbar />
 
         <main className="content">
-          <div className="simulator-grid">
-            <TransactionForm />
-
-            <section className="result-placeholder">
-              <h2>Resultado IA</h2>
-              <p>
-                Aquí aparecerá la clasificación, el puntaje de riesgo y la explicación
-                del modelo cuando se analice una transacción.
-              </p>
-            </section>
-          </div>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/transactions" element={<Transactions />} />
+          </Routes>
         </main>
       </div>
     </div>
