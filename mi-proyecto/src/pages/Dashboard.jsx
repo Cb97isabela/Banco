@@ -13,13 +13,6 @@ function Dashboard() {
 
   return (
     <section className="dashboard-page">
-      <div className="page-header">
-        <h2>Dashboard General</h2>
-        <p>
-          Resumen de transacciones analizadas, estados de riesgo y actividad del sistema.
-        </p>
-      </div>
-
       <div className="dashboard-cards">
         <MetricCard titulo="Transacciones analizadas" valor={dashboardData.transacciones} />
         <MetricCard titulo="Aprobadas" valor={dashboardData.aprobadas} color="success" />

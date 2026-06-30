@@ -1,25 +1,24 @@
 function Devices() {
   return (
     <section className="dashboard-page">
-      <div className="page-header">
-        <h2>Dispositivos y Accesos</h2>
-
-        <p>
-          Información de los dispositivos utilizados por los socios para acceder
-          a los canales digitales.
-        </p>
-      </div>
 
       <div className="dashboard-panel">
-        <div className="empty-table">
-          <strong>No existen dispositivos registrados.</strong>
 
-          <span>
-            Cuando el backend envíe información, aquí se visualizarán los
-            dispositivos, direcciones IP, ubicación y últimos accesos.
-          </span>
+        <div className="empty-state">
+
+          <h2>No existen dispositivos registrados</h2>
+
+          <p>
+            Cuando el backend en Python envíe la información,
+            aquí aparecerán todos los dispositivos utilizados por los socios,
+            incluyendo dirección IP, ubicación, sistema operativo,
+            fecha del último acceso y nivel de confianza.
+          </p>
+
         </div>
+
       </div>
+
     </section>
   );
 }

@@ -1,16 +1,23 @@
 import { useState } from "react";
+
 import TransactionForm from "../components/transaction/TransactionForm";
 import RiskResultCard from "../components/transaction/RiskResultCard";
 
 function Transactions() {
-  const [iaResult, setIaResult] = useState(null);
+  const [resultadoIA, setResultadoIA] = useState(null);
 
   return (
-    <div className="simulator-grid">
-      <TransactionForm onResult={setIaResult} />
+    <section className="dashboard-page">
+      <div className="transaction-layout">
+        <div className="transaction-left">
+          <TransactionForm onResult={setResultadoIA} />
+        </div>
 
-      <RiskResultCard result={iaResult} />
-    </div>
+        <div className="transaction-right">
+          <RiskResultCard resultado={resultadoIA} />
+        </div>
+      </div>
+    </section>
   );
 }
 

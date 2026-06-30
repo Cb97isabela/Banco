@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import { evaluarTransaccion } from "../../services/api";
 
 function TransactionForm({ onResult }) {
+  const [loading, setLoading] = useState(false);
+
   const generarIdTransaccion = () => {
     const fecha = new Date();
     const y = fecha.getFullYear();
@@ -36,6 +39,7 @@ function TransactionForm({ onResult }) {
 
   useEffect(() => {
     const ahora = new Date();
+
     const dias = [
       "domingo",
       "lunes",
@@ -80,84 +84,7 @@ function TransactionForm({ onResult }) {
     }));
   };
 
-  const calcularResultadoSimulado = (payload) => {
-    let puntaje = 0;
-    const motivos = [];
-
-    if (payload.monto > payload.variables_comportamiento.monto_promedio_socio * 2) {
-      puntaje += 30;
-      motivos.push(
-        `el monto solicitado (${payload.monto.toFixed(
-          2
-        )}) presenta una desviación alta respecto al promedio histórico del socio (${payload.variables_comportamiento.monto_promedio_socio.toFixed(
-          2
-        )})`
-      );
-    }
-
-    if (payload.beneficiario_nuevo) {
-      puntaje += 20;
-      motivos.push("el beneficiario es nuevo en el sistema");
-    }
-
-    if (payload.ip_riesgosa) {
-      puntaje += 20;
-      motivos.push("la dirección IP fue marcada como riesgosa");
-    }
-
-    if (!payload.variables_comportamiento.ubicacion_habitual) {
-      puntaje += 15;
-      motivos.push("la ubicación no coincide con el comportamiento habitual");
-    }
-
-    if (!payload.variables_comportamiento.dispositivo_habitual) {
-      puntaje += 15;
-      motivos.push("el dispositivo no es habitual para el socio");
-    }
-
-    if (payload.variables_comportamiento.transacciones_ultima_hora >= 5) {
-      puntaje += 15;
-      motivos.push("existen varias transacciones realizadas en la última hora");
-    }
-
-    puntaje = Math.min(puntaje, 100);
-
-    let clase_final = "Aprobada";
-    let riesgo_calculado = "bajo";
-
-    if (puntaje >= 70) {
-      clase_final = "Bloqueada";
-      riesgo_calculado = "alto";
-    } else if (puntaje >= 40) {
-      clase_final = "Pendiente de Validación";
-      riesgo_calculado = "medio";
-    }
-
-    const explicacion =
-      motivos.length > 0
-        ? `La transacción se marcó como ${clase_final} debido a que ${motivos.join(
-            ", sumado a que "
-          )}.`
-        : "La transacción fue aprobada porque no se detectaron patrones anómalos relevantes en el comportamiento del socio.";
-
-    return {
-      exito: true,
-      status_code: 200,
-      datos: {
-        id_transaccion: payload.id_transaccion,
-        resultado_ia: {
-          clase_final,
-          puntaje_riesgo: puntaje,
-          riesgo_calculado,
-          explicacion,
-        },
-        evaluado_en: new Date().toISOString(),
-      },
-      error: null,
-    };
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
@@ -180,14 +107,28 @@ function TransactionForm({ onResult }) {
       },
     };
 
-    console.log("JSON enviado al backend en Python:", payload);
+    try {
+      setLoading(true);
 
-    const respuestaSimuladaBackend = calcularResultadoSimulado(payload);
+      console.log("JSON enviado al backend en Python:", payload);
 
-    console.log("JSON recibido desde el backend:", respuestaSimuladaBackend);
+      const respuesta = await evaluarTransaccion(payload);
 
-    if (onResult) {
-      onResult(respuestaSimuladaBackend);
+      console.log("Respuesta recibida desde el backend:", respuesta);
+
+      if (respuesta?.exito && onResult) {
+        onResult(respuesta);
+      } else {
+        alert(respuesta?.error || "No fue posible evaluar la transacción.");
+      }
+    } catch (error) {
+      console.error("Error conectando con el backend:", error);
+
+      alert(
+        "No fue posible conectar con el backend en Python. Verifica que esté ejecutándose en http://localhost:8000"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -227,7 +168,11 @@ function TransactionForm({ onResult }) {
         <div className="form-grid">
           <div className="form-group">
             <label>Canal</label>
-            <select name="canal" value={transaction.canal} onChange={handleChange}>
+            <select
+              name="canal"
+              value={transaction.canal}
+              onChange={handleChange}
+            >
               <option value="banca_movil">Banca Móvil</option>
               <option value="banca_web">Banca Web</option>
               <option value="cajero">Cajero</option>
@@ -313,7 +258,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="transacciones_ultima_hora"
-              value={transaction.variables_comportamiento.transacciones_ultima_hora}
+              value={
+                transaction.variables_comportamiento.transacciones_ultima_hora
+              }
               onChange={handleBehaviorChange}
               placeholder="2"
               required
@@ -325,7 +272,9 @@ function TransactionForm({ onResult }) {
             <input
               type="number"
               name="tiempo_entre_operaciones"
-              value={transaction.variables_comportamiento.tiempo_entre_operaciones}
+              value={
+                transaction.variables_comportamiento.tiempo_entre_operaciones
+              }
               onChange={handleBehaviorChange}
               placeholder="15"
               required
@@ -402,8 +351,8 @@ function TransactionForm({ onResult }) {
         </div>
       </div>
 
-      <button className="analyze-btn" type="submit">
-        Analizar Transacción
+      <button className="analyze-btn" type="submit" disabled={loading}>
+        {loading ? "Analizando..." : "Analizar Transacción"}
       </button>
     </form>
   );
