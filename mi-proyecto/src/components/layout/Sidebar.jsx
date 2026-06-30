@@ -7,45 +7,74 @@ import {
   FaExclamationTriangle,
   FaDesktop,
   FaChartBar,
+  FaCircle,
+  FaServer,
 } from "react-icons/fa";
 
 function Sidebar() {
   return (
     <aside className="sidebar">
+      {/* Logo */}
+
       <div className="logo">
         <FaShieldAlt className="logo-icon" />
+
         <div>
           <h2>CoopSecure</h2>
           <span>AI Fraud Detection</span>
         </div>
       </div>
 
+      {/* Menú */}
+
       <nav>
+
         <NavLink to="/dashboard">
           <FaHome />
-          Dashboard
+          <span>Dashboard</span>
         </NavLink>
 
         <NavLink to="/transactions">
           <FaExchangeAlt />
-          Transacciones
+          <span>Transacciones</span>
         </NavLink>
 
         <NavLink to="/frauds">
           <FaExclamationTriangle />
-          Posibles Fraudes
+          <span>Posibles Fraudes</span>
         </NavLink>
 
         <NavLink to="/devices">
           <FaDesktop />
-          Dispositivos
+          <span>Dispositivos</span>
         </NavLink>
 
         <NavLink to="/reports">
           <FaChartBar />
-          Reportes
+          <span>Reportes</span>
         </NavLink>
+
       </nav>
+
+      {/* Estado del backend */}
+
+      <div className="backend-status">
+
+        <div className="backend-title">
+          <FaServer />
+          <span>Backend</span>
+        </div>
+
+        <div className="backend-indicator online">
+          <FaCircle />
+          <span>Simulación Local</span>
+        </div>
+
+        <small>
+          Esperando conexión con Python API
+        </small>
+
+      </div>
     </aside>
   );
 }

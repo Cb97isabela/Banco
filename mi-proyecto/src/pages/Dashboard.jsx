@@ -1,4 +1,7 @@
 import MetricCard from "../components/dashboard/MetricCard";
+import RiskDistributionChart from "../components/dashboard/RiskDistributionChart";
+import ChannelUsageChart from "../components/dashboard/ChannelUsageChart";
+import RecentTransactionsTable from "../components/dashboard/RecentTransactionsTable";
 
 function Dashboard() {
   const dashboardData = {
@@ -23,6 +26,13 @@ function Dashboard() {
         <MetricCard titulo="Pendientes" valor={dashboardData.pendientes} color="warning" />
         <MetricCard titulo="Bloqueadas" valor={dashboardData.bloqueadas} color="danger" />
       </div>
+
+      <div className="dashboard-grid">
+        <RiskDistributionChart />
+        <ChannelUsageChart />
+      </div>
+
+      <RecentTransactionsTable />
     </section>
   );
 }
